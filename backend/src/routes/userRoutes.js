@@ -3,12 +3,15 @@ const router = express.Router();
 
 const protect = require("../middleware/authMiddleware");
 
-// GET PROFILE (Protected)
-router.get("/profile", protect, (req, res) => {
-  res.status(200).json({
-    message: "User profile fetched successfully",
-    user: req.user
-  });
-});
+const {
+  getProfile,
+  updateProfile,
+} = require("../controllers/userController");
+
+// Get Logged-in User
+router.get("/profile", protect, getProfile);
+
+// Update Logged-in User
+router.put("/profile", protect, updateProfile);
 
 module.exports = router;

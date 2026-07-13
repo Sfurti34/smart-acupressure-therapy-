@@ -7,11 +7,40 @@ const {
   loginUser,
 } = require("../controllers/authController");
 
-// REGISTER API
-router.post("/register", registerUser);
+const {
+  validateRegister,
+  validateLogin,
+} = require("../middleware/validation");
 
+
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: Register new user
+ *     tags:
+ *       - Authentication
+ *     responses:
+ *       201:
+ *         description: User registered successfully
+ */
+
+// REGISTER API
+router.post("/register", validateRegister, registerUser);
+
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: Login user
+ *     tags:
+ *       - Authentication
+ *     responses:
+ *       200:
+ *         description: Login successful
+ */
 // LOGIN API
-router.post("/login", loginUser);
+router.post("/login", validateLogin, loginUser);
 
 // Export router
 module.exports = router;

@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 // REGISTER USER
-const registerUser = async (req, res) => {
+const registerUser = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
 
@@ -29,24 +29,27 @@ const registerUser = async (req, res) => {
 
     // 4. Generate token
     const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+  { id: user._id },
+  process.env.JWT_SECRET,
+  {
+    expiresIn: process.env.JWT_EXPIRE,
+  }
+);
 
     // 5. Send response
-    res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      token,
-    });
+res.status(201).json({
+  success: true,
+  token,
+  user: {
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+  },
+});
 
   } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    });
-  }
+    next(error);
+}
 };
 
 // LOGIN USER
@@ -74,24 +77,28 @@ const loginUser = async (req, res) => {
 
     // 3. Generate token
     const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+  { id: user._id },
+  process.env.JWT_SECRET,
+  {
+    expiresIn: process.env.JWT_EXPIRE,
+  }
+);
 
     // 4. Send response
-    res.status(200).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      token,
-    });
+res.status(200).json({
+  success: true,
+  token,
+  user: {
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+  },
+});
 
   } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    });
-  }
+    next(error);
+}
+
 };
 
 module.exports = {
