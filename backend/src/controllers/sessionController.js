@@ -1,4 +1,5 @@
 const Session = require("../models/sessionModel");
+const { publishTherapy } = require("../config/mqtt");
 
 // Start Therapy Session
 const startSession = async (req, res, next) => {
@@ -12,12 +13,22 @@ const startSession = async (req, res, next) => {
       });
     }
 
+    // 1. Save session in MongoDB
     const session = await Session.create({
       user: req.user._id,
       mode,
       status: "active",
       startTime: new Date(),
     });
+
+    // 2. Send therapy command through MQTT
+    publishTherapy({
+      action: "start",
+      mode: mode,
+      sessionId: session._id.toString(),
+    });
+
+    console.log("Therapy started:", mode);
 
     res.status(201).json({
       success: true,
@@ -29,6 +40,7 @@ const startSession = async (req, res, next) => {
     next(error);
   }
 };
+
 
 //stop therapy session
 const stopSession = async (req, res, next) => {
@@ -58,6 +70,11 @@ const stopSession = async (req, res, next) => {
     session.status = "completed";
 
     await session.save();
+    publishTherapy({
+  action: "stop",
+  mode: session.mode,
+  sessionId: session._id.toString(),
+});
 
     res.status(200).json({
       success: true,
@@ -117,6 +134,44 @@ const getSessionById = async (req, res, next) => {
 }
 };
 
+// Update session feedback
+const updateFeedback = async (req, res, next) => {
+  try {
+    const { feedback } = req.body;
+
+    if (!feedback) {
+      return res.status(400).json({
+        success: false,
+        message: "Feedback is required",
+      });
+    }
+
+    const session = await Session.findOne({
+      _id: req.params.id,
+      user: req.user._id,
+    });
+
+    if (!session) {
+      return res.status(404).json({
+        success: false,
+        message: "Session not found",
+      });
+    }
+
+    session.feedback = feedback;
+
+    await session.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Feedback saved successfully",
+      session,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 
 
@@ -125,5 +180,6 @@ module.exports = {
   stopSession,
   getHistory,
   getSessionById,
+  updateFeedback,
   
 };

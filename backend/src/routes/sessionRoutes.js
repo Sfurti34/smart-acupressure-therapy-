@@ -8,6 +8,7 @@ const {
   stopSession,
   getHistory,
   getSessionById,
+  updateFeedback,
 } = require("../controllers/sessionController");
 
 // Test Route
@@ -29,5 +30,8 @@ router.get("/history", protect, getHistory);
 
 // Single Session
 router.get("/:id", protect, getSessionById);
+
+//feedback
+router.patch("/:id/feedback", protect, updateFeedback);
 
 module.exports = router;

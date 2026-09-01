@@ -14,6 +14,13 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+
+  age:{
+ type:Number
+},
+
+goals:[String]
+
 }, { timestamps: true });
 
 module.exports = mongoose.model("User", UserSchema);

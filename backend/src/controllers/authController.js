@@ -5,7 +5,7 @@ const User = require("../models/User");
 // REGISTER USER
 const registerUser = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, age, goals} = req.body;
 
     // 1. Check if user already exists
     const userExists = await User.findOne({ email });
@@ -17,15 +17,25 @@ const registerUser = async (req, res, next) => {
     }
 
     // 2. Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+const salt = await bcrypt.genSalt(10);
+const hashedPassword = await bcrypt.hash(password, salt);
 
+console.log("REGISTER DATA:", {
+  name,
+  email,
+  age,
+  goals
+});
     // 3. Create user
     const user = await User.create({
       name,
       email,
       password: hashedPassword,
+      age,
+      goals
     });
+
+    console.log("USER SAVED:", user._id);
 
     // 4. Generate token
     const token = jwt.sign(
@@ -44,6 +54,8 @@ res.status(201).json({
     _id: user._id,
     name: user.name,
     email: user.email,
+    age: user.age,
+    goals: user.goals
   },
 });
 
@@ -53,7 +65,8 @@ res.status(201).json({
 };
 
 // LOGIN USER
-const loginUser = async (req, res) => {
+console.log("===== LOGIN API CALLED =====");
+const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
@@ -92,6 +105,8 @@ res.status(200).json({
     _id: user._id,
     name: user.name,
     email: user.email,
+    age: user.age,
+    goals: user.goals
   },
 });
 

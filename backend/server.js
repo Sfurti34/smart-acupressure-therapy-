@@ -13,6 +13,8 @@ const compression = require("compression");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./src/config/swagger");
 
+require("./src/config/mqtt");
+
 
 
 const app = express();
@@ -44,13 +46,15 @@ dns.setServers(["1.1.1.1", "8.8.8.8"]); // errors took me 2 days to resolve
 
 
 
-app.use(cors({
+app.use(
+  cors({
     origin: [
-        "http://localhost:3000",
-        "http://localhost:5173"
+      "http://localhost:8080",
+      "http://11.11.2.109:8080",
     ],
-    credentials: true
-}));
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 
@@ -72,7 +76,7 @@ app.get("/", (req, res) => {
 //Routes
 app.use("/api/auth", authRoutes);   //for connecting routes
 app.use("/api/user", userRoutes);
-app.use("/api/session", sessionRoutes);
+app.use("/api/sessions", sessionRoutes);
 
 // Global Error Handler
 app.use(errorHandler);
