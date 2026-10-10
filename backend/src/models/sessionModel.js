@@ -12,12 +12,12 @@ const sessionSchema = new mongoose.Schema(
       type: String,
       required: true,
       enum: [
-  "Relax Mode",
-  "Stress Mode",
-  "Sleep Mode",
-  "Neck Pain Mode",
-  "Back Pain Mode",
-  "Custom",
+  "relax",
+  "stress",
+  "sleep",
+  "neck",
+  "back",
+  "custom",
 ],
     },
 
