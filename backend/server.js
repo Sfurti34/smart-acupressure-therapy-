@@ -46,15 +46,18 @@ dns.setServers(["1.1.1.1", "8.8.8.8"]); // errors took me 2 days to resolve
 
 
 
+
 app.use(
   cors({
     origin: [
       "http://localhost:8080",
       "http://11.11.2.109:8080",
+      "https://theraease-eta.vercel.app",
     ],
     credentials: true,
   })
 );
+
 
 app.use(express.json());
 
